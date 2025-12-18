@@ -3,12 +3,18 @@ import unittest
 import random
 from selenium import webdriver
 import os
-import Helpers_OpenAI as h
+#import HtmlTestRunner
+#import AllureReports
+from OpenAI import Helpers_OpenAI as h
+#import Helpers_OpenAI as h
 
 from selenium.webdriver.chrome.service import Service as ChromeService
+from selenium.webdriver.chrome.options import Options as ChromeOptions
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.edge.service import Service as EdgeService
+from selenium.webdriver.edge.options import Options as EdgeOptions
 from webdriver_manager.microsoft import EdgeChromiumDriverManager
+
 
 from selenium.common import WebDriverException as WDE, NoSuchElementException
 from selenium.webdriver.common.keys import Keys
@@ -42,24 +48,24 @@ class ChromeTestPositive(unittest.TestCase):
         Parental_Controls = driver.find_element(By.XPATH, "(//a[@id='65FG7bFcn1JxADqHbF1nQx'])[1]")
         driver.execute_script("return arguments[0].scrollIntoView(true);", Parental_Controls)
         if Parental_Controls is not None:
-            print("✅ Section 'Parental_Controls' is visible and displayed")
+            print("Section 'Parental_Controls' is visible and displayed")
         else:
-            print("❌ Section 'Parental_Controls' is not displayed")
+            print("Section 'Parental_Controls' is not displayed")
         delay()
 # 3. Verify that the 'Test' diagram is displayed on the page
         Test_diagram = driver.find_element(By.XPATH, "//div[@class='relative font-mono uppercase md:h-[1080px] md:w-[1920px]']")
         driver.execute_script("return arguments[0].scrollIntoView(true);", Test_diagram)
         if Test_diagram is not None:
-            print("✅ Section 'Test_diagram' is visible and displayed")
+            print("Section 'Test_diagram' is visible and displayed")
         else:
-            print("❌ Section 'Test_diagram' is not displayed")
+            print("Section 'Test_diagram' is not displayed")
         delay()
 # 4. Verify that the page title is 'Safety at Every Step'
         try:
             assert "Safety & responsibility | OpenAI" in driver.title
-            print("✅ Title is correct!")
+            print("Title is correct!")
         except WDE:
-            print("❌ Title is wrong! Title is: ", driver.title)
+            print("Title is wrong! Title is: ", driver.title)
 
     def test_chrome_TC_P_002(self):
         driver = self.driver
@@ -72,9 +78,9 @@ class ChromeTestPositive(unittest.TestCase):
         time.sleep(7)
         driver.save_screenshot("before_play.png")
         if Where_is_IA_going is not None:
-            print("✅ Section 'Where_is_IA_going' is visible and displayed")
+            print("Section 'Where_is_IA_going' is visible and displayed")
         else:
-            print("❌ Section 'Where_is_IA_going' is not displayed")
+            print("Section 'Where_is_IA_going' is not displayed")
 # 3. Play the video
         play_button = driver.find_element(By.XPATH, "//div[@class='flex-initial']//button[@aria-label='Pause video']//*[name()='svg']")
         play_button.click()
@@ -83,9 +89,9 @@ class ChromeTestPositive(unittest.TestCase):
 # 4. Check if video is playing
         driver.save_screenshot("after_play.png")
         if Where_is_IA_going.is_displayed():
-            print("✅ Video is playing!")
+            print("Video is playing!")
         else:
-            print("❌ Video is NOT playing!")
+            print("Video is NOT playing!")
 
     def test_chrome_TC_P_003(self):
         driver = self.driver
@@ -99,9 +105,9 @@ class ChromeTestPositive(unittest.TestCase):
         wait = WebDriverWait(driver, 4)
         try:
             wait.until(EC.visibility_of_element_located((By.XPATH, "//img[@alt='OpenAI humans']")))
-            print("✅ 'OpenAI Humans' image is visible on the page")
+            print("'OpenAI Humans' image is visible on the page")
         except NoSuchElementException:
-            print("❌ Page is wrong!")
+            print("Page is wrong!")
 
     def test_chrome_TC_P_004(self):
         driver = self.driver
@@ -144,9 +150,9 @@ class ChromeTestPositive(unittest.TestCase):
             time.sleep(3)
 
         if downloaded:
-            print("✅ File downloaded successfully!")
+            print("File downloaded successfully!")
         else:
-            print("❌ File not found.")
+            print("File not found.")
 
     def test_chrome_TC_P_005(self):
         driver = self.driver
@@ -176,7 +182,7 @@ class ChromeTestPositive(unittest.TestCase):
         is_paused = driver.execute_script("return arguments[0].paused", audio_player)
         # assert is_paused is False, "Audio should be playing but is paused"
         # assert end_time > start_time, "Audio currentTime did not advance — not playing"
-        print("✅ 'Listen to Article' player is working!")
+        print("'Listen to Article' player is working!")
 
     # Anything declared in tearDown will be executed for all test cases
 # Closing browser. You need to use "tearDown" method only one time for every Class
@@ -185,13 +191,29 @@ class ChromeTestPositive(unittest.TestCase):
 
 class EdgeTestPositive(unittest.TestCase):
     def setUp(self):
-        options = webdriver.EdgeOptions()
-        # options.add_argument("--disable-blink-features=AutomationControlled")
-        self.driver = webdriver.Edge(service=EdgeService(EdgeChromiumDriverManager().install()), options=options)
+        edge_options = EdgeOptions()
+        edge_options.add_argument("--disable-blink-features=AutomationControlled")
+        edge_options.add_experimental_option("excludeSwitches", ["enable-automation"])
+        edge_options.add_experimental_option('useAutomationExtension', False)
+        edge_options.add_argument("--no-sandbox")
+        edge_options.add_argument("--disable-dev-shm-usage")
+        edge_options.add_argument("--start-maximized")
+        edge_options.add_argument("--disable-gpu")
+        # Настройка папки загрузки
+        download_dir = os.path.join(os.getcwd(), "downloads")
+        os.makedirs(download_dir, exist_ok=True)
+        edge_options.add_experimental_option("prefs", {
+            "download.default_directory": download_dir,
+            "download.prompt_for_download": False,
+        })
+        # Инициализация драйвера
+        self.driver = webdriver.Edge(options=edge_options)
+        # Скрытие автоматизации
+        self.driver.execute_script(
+            "Object.defineProperty(navigator, 'webdriver', {get: () => undefined})"
+        )
         self.driver.maximize_window()
-        # options.page_load_strategy = 'eager'
-        driver = self.driver
-        wait = WebDriverWait(driver, 5)
+        self.wait = WebDriverWait(self.driver, 10)
 
     # This is a class setUp. We will have 2 (chrome, edge)
 
@@ -204,25 +226,25 @@ class EdgeTestPositive(unittest.TestCase):
         Parental_Controls = driver.find_element(By.XPATH, "(//a[@id='65FG7bFcn1JxADqHbF1nQx'])[1]")
         driver.execute_script("return arguments[0].scrollIntoView(true);", Parental_Controls)
         if Parental_Controls is not None:
-            print("✅ Section 'Parental_Controls' is visible and displayed")
+            print("Section 'Parental_Controls' is visible and displayed")
         else:
-            print("❌ Section 'Parental_Controls' is not displayed")
+            print("Section 'Parental_Controls' is not displayed")
         delay()
         # 3. Verify that the 'Test' diagram is displayed on the page
         Test_diagram = driver.find_element(By.XPATH,
                                            "//div[@class='relative font-mono uppercase md:h-[1080px] md:w-[1920px]']")
         driver.execute_script("return arguments[0].scrollIntoView(true);", Test_diagram)
         if Test_diagram is not None:
-            print("✅ Section 'Test_diagram' is visible and displayed")
+            print("Section 'Test_diagram' is visible and displayed")
         else:
-            print("❌ Section 'Test_diagram' is not displayed")
+            print("Section 'Test_diagram' is not displayed")
         delay()
         # 4. Verify that the page title is 'Safety at Every Step'
         try:
             assert "Safety & responsibility | OpenAI" in driver.title
-            print("✅ Title is correct!")
+            print("Title is correct!")
         except WDE:
-            print("❌ Title is wrong! Title is: ", driver.title)
+            print("Title is wrong! Title is: ", driver.title)
 
     def test_edge_TC_P_002(self):
         driver = self.driver
@@ -236,9 +258,9 @@ class EdgeTestPositive(unittest.TestCase):
         time.sleep(7)
         driver.save_screenshot("before_play.png")
         if Where_is_IA_going is not None:
-            print("✅ Section 'Where_is_IA_going' is visible and displayed")
+            print("Section 'Where_is_IA_going' is visible and displayed")
         else:
-            print("❌ Section 'Where_is_IA_going' is not displayed")
+            print("Section 'Where_is_IA_going' is not displayed")
         # 3. Play the video
         play_button = driver.find_element(By.XPATH,
                                           "//div[@class='flex-initial']//button[@aria-label='Pause video']//*[name()='svg']")
@@ -248,9 +270,9 @@ class EdgeTestPositive(unittest.TestCase):
         # 4. Check if video is playing
         driver.save_screenshot("after_play.png")
         if Where_is_IA_going.is_displayed():
-            print("✅ Video is playing!")
+            print("Video is playing!")
         else:
-            print("❌ Video is NOT playing!")
+            print("Video is NOT playing!")
 
     def test_edge_TC_P_003(self):
         driver = self.driver
@@ -265,9 +287,9 @@ class EdgeTestPositive(unittest.TestCase):
         wait = WebDriverWait(driver, 4)
         try:
             wait.until(EC.visibility_of_element_located((By.XPATH, "//img[@alt='OpenAI humans']")))
-            print("✅ 'OpenAI Humans' image is visible on the page")
+            print("'OpenAI Humans' image is visible on the page")
         except NoSuchElementException:
-            print("❌ Page is wrong!")
+            print("Page is wrong!")
 
     def test_edge_TC_P_004(self):
         driver = self.driver
@@ -311,9 +333,9 @@ class EdgeTestPositive(unittest.TestCase):
             time.sleep(3)
 
         if downloaded:
-            print("✅ File downloaded successfully!")
+            print("File downloaded successfully!")
         else:
-            print("❌ File not found.")
+            print("File not found.")
 
     def test_edge_TC_P_005(self):
         driver = self.driver
@@ -343,7 +365,7 @@ class EdgeTestPositive(unittest.TestCase):
         is_paused = driver.execute_script("return arguments[0].paused", audio_player)
         # assert is_paused is False, "Audio should be playing but is paused"
         # assert end_time > start_time, "Audio currentTime did not advance — not playing"
-        print("✅ 'Listen to Article' player is working!")
+        print("'Listen to Article' player is working!")
 
     # Anything declared in tearDown will be executed for all test cases
     # Closing browser. You need to use "tearDown" method only one time for every Class
@@ -383,7 +405,7 @@ class ChromeTestNegative(unittest.TestCase):
         time.sleep(2)
     # Verify URL did not change (still on safety page)
         assert "openai.com/safety" in driver.current_url, "Search should not work when empty"
-        print("✅ Search button is inactive when search field is empty")
+        print("Search button is inactive when search field is empty")
 
     def test_chrome_TC_N_002(self):
         driver = self.driver
@@ -402,10 +424,10 @@ class ChromeTestNegative(unittest.TestCase):
 # 5. Click the submit button
         search_input.submit()
         time.sleep(8)
-        # ✅ Verify expected result: "It looks like your question goes beyond what we can assist with here" message appears
+        # Verify expected result: "It looks like your question goes beyond what we can assist with here" message appears
         page_source = driver.page_source
         assert "It looks like your question goes beyond what we can assist with here." in page_source, "Expected 'It looks like your question goes beyond what we can assist with here' message for invalid search term"
-        print("✅ Verified: Invalid search shows 'It looks like your question goes beyond what we can assist with here'")
+        print("Verified: Invalid search shows 'It looks like your question goes beyond what we can assist with here'")
 
     def test_chrome_TC_N_003(self):
         driver = self.driver
@@ -423,10 +445,10 @@ class ChromeTestNegative(unittest.TestCase):
         continue_button = driver.find_element(By.XPATH, "//button[normalize-space()='Continue']")
         continue_button.click()
         time.sleep(2)
-# ✅ Expected Result: Error message "Email is required"
+# Expected Result: Error message "Email is required"
         page_source = driver.page_source
         assert "Email is required" in page_source, "Expected error message 'Email is required' not found"
-        print("✅ Verified: Login form does not allow submission when email is empty")
+        print("Verified: Login form does not allow submission when email is empty")
 
     def test_chrome_TC_N_004(self):
         driver = self.driver
@@ -449,10 +471,10 @@ class ChromeTestNegative(unittest.TestCase):
         continue_btn = driver.find_element(By.XPATH, "//button[normalize-space()='Continue']")
         continue_btn.click()
         time.sleep(3)
-        # ✅ Expected Result: Error message "Phone number is not valid"
+        #Expected Result: Error message "Phone number is not valid"
         page_source = driver.page_source
         assert "Phone number is not valid" in page_source, "Expected error message 'Phone number is not valid' not found"
-        print("✅ Verified: ChatGPT login form rejects invalid phone number with proper error message")
+        print("Verified: ChatGPT login form rejects invalid phone number with proper error message")
 
     def test_chrome_TC_N_005(self):
         driver = self.driver
@@ -472,10 +494,10 @@ class ChromeTestNegative(unittest.TestCase):
         continue_button = driver.find_element(By.XPATH, "//button[normalize-space()='Continue']")
         continue_button.click()
         time.sleep(3)
-        # ✅ Expected Result: Error message "Email is not valid"
+        #Expected Result: Error message "Email is not valid"
         page_source = driver.page_source
         assert "Email is not valid" in page_source, "Expected error message 'Email is not valid' not found"
-        print("✅ Verified: error message 'Email is not valid'")
+        print("Verified: error message 'Email is not valid'")
 
     # Anything declared in tearDown will be executed for all test cases
 # Closing browser. You need to use "tearDown" method only one time for every Class
@@ -484,13 +506,29 @@ class ChromeTestNegative(unittest.TestCase):
 
 class EdgeTestNegative(unittest.TestCase):
     def setUp(self):
-        options = webdriver.EdgeOptions()
-        #options.add_argument("--disable-blink-features=AutomationControlled")
-        self.driver = webdriver.Edge(service=EdgeService(EdgeChromiumDriverManager().install()), options=options)
+        edge_options = EdgeOptions()
+        edge_options.add_argument("--disable-blink-features=AutomationControlled")
+        edge_options.add_experimental_option("excludeSwitches", ["enable-automation"])
+        edge_options.add_experimental_option('useAutomationExtension', False)
+        edge_options.add_argument("--no-sandbox")
+        edge_options.add_argument("--disable-dev-shm-usage")
+        edge_options.add_argument("--start-maximized")
+        edge_options.add_argument("--disable-gpu")
+        # Настройка папки загрузки
+        download_dir = os.path.join(os.getcwd(), "downloads")
+        os.makedirs(download_dir, exist_ok=True)
+        edge_options.add_experimental_option("prefs", {
+            "download.default_directory": download_dir,
+            "download.prompt_for_download": False,
+        })
+        # Инициализация драйвера
+        self.driver = webdriver.Edge(options=edge_options)
+        # Скрытие автоматизации
+        self.driver.execute_script(
+            "Object.defineProperty(navigator, 'webdriver', {get: () => undefined})"
+        )
         self.driver.maximize_window()
-        #options.page_load_strategy = 'eager'
-        driver = self.driver
-        wait = WebDriverWait(driver, 5)
+        self.wait = WebDriverWait(self.driver, 10)
 # This is a class setUp. We will have 2 (chrome, edge)
 
     def test_edge_TC_N_001(self):
@@ -514,7 +552,7 @@ class EdgeTestNegative(unittest.TestCase):
         time.sleep(2)
     # Verify URL did not change (still on safety page)
         assert "openai.com/safety" in driver.current_url, "Search should not work when empty"
-        print("✅ Search button is inactive when search field is empty")
+        print("Search button is inactive when search field is empty")
 
     def test_edge_TC_N_002(self):
         driver = self.driver
@@ -533,10 +571,10 @@ class EdgeTestNegative(unittest.TestCase):
 # 5. Click the submit button
         search_input.submit()
         time.sleep(8)
-        # ✅ Verify expected result: "It looks like your question goes beyond what we can assist with here" message appears
+        # Verify expected result: "It looks like your question goes beyond what we can assist with here" message appears
         page_source = driver.page_source
         assert "It looks like your question goes beyond what we can assist with here." in page_source, "Expected 'It looks like your question goes beyond what we can assist with here' message for invalid search term"
-        print("✅ Verified: Invalid search shows 'It looks like your question goes beyond what we can assist with here'")
+        print("Verified: Invalid search shows 'It looks like your question goes beyond what we can assist with here'")
 
     def test_edge_TC_N_003(self):
         driver = self.driver
@@ -554,10 +592,10 @@ class EdgeTestNegative(unittest.TestCase):
         continue_button = driver.find_element(By.XPATH, "//button[normalize-space()='Continue']")
         continue_button.click()
         time.sleep(2)
-# ✅ Expected Result: Error message "Email is required"
+# Expected Result: Error message "Email is required"
         page_source = driver.page_source
         assert "Email is required" in page_source, "Expected error message 'Email is required' not found"
-        print("✅ Verified: Login form does not allow submission when email is empty")
+        print("Verified: Login form does not allow submission when email is empty")
 
     def test_edge_TC_N_004(self):
         driver = self.driver
@@ -580,10 +618,10 @@ class EdgeTestNegative(unittest.TestCase):
         continue_btn = driver.find_element(By.XPATH, "//button[normalize-space()='Continue']")
         continue_btn.click()
         time.sleep(3)
-        # ✅ Expected Result: Error message "Phone number is not valid"
+        #Expected Result: Error message "Phone number is not valid"
         page_source = driver.page_source
         assert "Phone number is not valid" in page_source, "Expected error message 'Phone number is not valid' not found"
-        print("✅ Verified: ChatGPT login form rejects invalid phone number with proper error message")
+        print("Verified: ChatGPT login form rejects invalid phone number with proper error message")
 
     def test_edge_TC_N_005(self):
         driver = self.driver
@@ -603,12 +641,20 @@ class EdgeTestNegative(unittest.TestCase):
         continue_button = driver.find_element(By.XPATH, "//button[normalize-space()='Continue']")
         continue_button.click()
         time.sleep(3)
-        # ✅ Expected Result: Error message "Email is not valid"
+        #Expected Result: Error message "Email is not valid"
         page_source = driver.page_source
         assert "Email is not valid" in page_source, "Expected error message 'Email is not valid' not found"
-        print("✅ Verified: error message 'Email is not valid'")
+        print("Verified: error message 'Email is not valid'")
 
     # Anything declared in tearDown will be executed for all test cases
 # Closing browser. You need to use "tearDown" method only one time for every Class
     def tearDown(self):
         self.driver.quit()
+
+
+# if __name__ == '__main__':
+#   unittest.main(testRunner=HtmlTestRunner.HTMLTestRunner(output='./HtmlReports'))
+
+# if __name__ == "__main__":
+#   unittest.main(AllureReports)
+
