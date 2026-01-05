@@ -3,7 +3,7 @@
 <div align="center">
 
 <img src=https://github.com/SerineGit/Open-AI-testing-project/blob/main/gpt-robot.gif />
-
+[![CLICK HERE](https://img.shields.io/badge/CLICK_HERE-blue?style=for-the-badge)](https://serinegit.github.io/Open-AI-page/)
 
 
 
