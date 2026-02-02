@@ -2,8 +2,14 @@
 
 <div align="center">
 
-<img src=https://github.com/SerineGit/Open-AI-testing-project/blob/main/gpt-robot.gif />
-[![CLICK HERE](https://img.shields.io/badge/CLICK_HERE-blue?style=for-the-badge)](https://serinegit.github.io/Open-AI-page/)
+
+### 🎉 **Don't Like Boring READMEs?** 
+
+**Visit Our Interactive Project Page!** ✨
+
+<a href="https://serinegit.github.io/Open-AI-page" target="_blank">
+<img src="https://img.shields.io/badge/🌟%20Interactive%20Page-Visit%20Now!-FF6B6B?style=for-the-badge&logo=github-pages&logoColor=white&labelColor=4ECDC4" alt="Interactive Project Page" />
+</a>
 
 
 
@@ -138,7 +144,7 @@
 </td>
 <td align="center">
 
-<img src="https://media.licdn.com/dms/image/v2/D4E03AQH8n0d765_vew/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1697497690550?e=1766620800&v=beta&t=Y33-cJbHFhOPvjR0kwQCBW6qKlfJnkIIPLqJ4BV-TuA" width="70"/><br>
+<img src="https://media.licdn.com/dms/image/v2/D4E03AQH8n0d765_vew/profile-displayphoto-shrink_400_400/profile-displayphoto-shrink_400_400/0/1697497690550?e=1770249600&v=beta&t=Y8P0SiBqDyoWLHJGv1FVH-M3PalRc2XHt8t7zIpHbLw" width="70"/><br>
 **Lana Chovhan**<br>
 [<img src="https://img.shields.io/badge/GitHub-181717?style=flat&logo=github" />](https://github.com/LanSvet) • [<img src="https://img.shields.io/badge/LinkedIn-0A66C2?style=flat&logo=linkedin" />](https://www.linkedin.com/in/lana-chovgan/)
 
@@ -154,7 +160,7 @@
 </td>
 <td align="center">
 
-<img src="https://media.licdn.com/dms/image/v2/D4D03AQE5U1qYmG8tbg/profile-displayphoto-crop_800_800/B4DZmDzFQ2GwAI-/0/1758852830716?e=1766620800&v=beta&t=fnzsdejNmfo_8dhocSyBU4aAp1xcj-5Yyctqi93Tw8g" width="70"/><br>
+<img src="https://media.licdn.com/dms/image/v2/D4D03AQE5U1qYmG8tbg/profile-displayphoto-scale_400_400/B4DZmDzFQ2GwAg-/0/1758852830808?e=1770249600&v=beta&t=nh1-LWFhS0V07qML5lEGSspvl7e347CATasig7uBzho" width="70"/><br>
 **Tigran Nikoghosyan**<br>
 [<img src="https://img.shields.io/badge/GitHub-181717?style=flat&logo=github" />](https://github.com/Tikgithub9) • [<img src="https://img.shields.io/badge/LinkedIn-0A66C2?style=flat&logo=linkedin" />](https://www.linkedin.com/in/tigran-nikoghosyan/)
 
